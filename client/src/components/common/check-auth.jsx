@@ -17,6 +17,12 @@ function CheckAuth({ isAuthenticated, user, children }) {
     }
   }
 
+  if (location.pathname.includes("/shop")) {
+    if (!isAuthenticated) {
+      return <Navigate to="/auth/login" />;
+    } 
+  }
+
   if (
     !isAuthenticated &&
     !(

@@ -2,12 +2,16 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { brandOptionsMap, categoryOptionsMap } from "@/config";
 import { Badge } from "../ui/badge";
+import { useSelector } from "react-redux";
 
 function ShoppingProductTile({
   product,
   handleGetProductDetails,
   handleAddtoCart,
 }) {
+  const { isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
   return (
     <Card className="w-full max-w-sm mx-auto">
       <div onClick={() => handleGetProductDetails(product?._id)}>
@@ -64,7 +68,12 @@ function ShoppingProductTile({
           </Button>
         ) : (
           <Button
-            onClick={() => handleAddtoCart(product?._id, product?.totalStock)}
+            onClick={() =>  {if(isAuthenticated){
+              handleAddtoCart(product?._id, product?.totalStock)
+            } else {
+              window.location.href = "/auth/login"
+            }
+               }}
             className="w-full"
           >
             Add to cart
