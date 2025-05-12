@@ -1,25 +1,38 @@
-const mongoose = require("mongoose");
+'use strict';
+const { Model } = require('sequelize');
 
-const UserSchema = new mongoose.Schema({
-  userName: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    default: "user",
-  },
-});
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    static associate(models) {
+      User.belongsTo(models.Role, { foreignKey: 'role_id' });
+    }
+  }
 
-const User = mongoose.model("User", UserSchema);
-module.exports = User;
+  User.init(
+    {
+      userName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      role_id: {
+        type: DataTypes.INTEGER,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'User',
+    }
+  );
+
+  return User;
+};

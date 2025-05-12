@@ -1,15 +1,23 @@
-const mongoose = require("mongoose");
-
-const AddressSchema = new mongoose.Schema(
-  {
-    userId: String,
-    address: String,
-    city: String,
-    pincode: String,
-    phone: String,
-    notes: String,
-  },
-  { timestamps: true }
-);
-
-module.exports = mongoose.model("Address", AddressSchema);
+'use strict';
+const { Model } = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Address extends Model {
+    static associate(models) {
+      Address.belongsTo(models.User, { foreignKey: 'user_id' });
+    }
+  }
+  Address.init({
+    user_id: DataTypes.INTEGER,
+    address: DataTypes.STRING,
+    city: DataTypes.STRING,
+    pincode: DataTypes.STRING,
+    phone: DataTypes.STRING,
+    notes: DataTypes.STRING
+  }, {
+    sequelize,
+    modelName: 'Address',
+    tableName: 'Addresses',
+    timestamps: true
+  });
+  return Address;
+};

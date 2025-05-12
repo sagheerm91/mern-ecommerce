@@ -1,33 +1,25 @@
-const mongoose = require("mongoose");
-
-const OrderSchema = new mongoose.Schema({
-  userId: String,
-  cartId: String,
-  cartItems: [
-    {
-      productId: String,
-      title: String,
-      image: String,
-      price: String,
-      quantity: Number,
-    },
-  ],
-  addressInfo: {
-    addressId: String,
-    address: String,
-    city: String,
-    pincode: String,
-    phone: String,
-    notes: String,
-  },
-  orderStatus: String,
-  paymentMethod: String,
-  paymentStatus: String,
-  totalAmount: Number,
-  orderDate: Date,
-  orderUpdateDate: Date,
-  paymentId: String,
-  payerId: String,
-});
-
-module.exports = mongoose.model("Order", OrderSchema);
+'use strict';
+const { Model } = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Order extends Model {}
+  Order.init({
+    userId: DataTypes.STRING,
+    cartId: DataTypes.STRING,
+    cartItems: DataTypes.JSON,
+    addressInfo: DataTypes.JSON,
+    orderStatus: DataTypes.STRING,
+    paymentMethod: DataTypes.STRING,
+    paymentStatus: DataTypes.STRING,
+    totalAmount: DataTypes.FLOAT,
+    orderDate: DataTypes.DATE,
+    orderUpdateDate: DataTypes.DATE,
+    paymentId: DataTypes.STRING,
+    payerId: DataTypes.STRING
+  }, {
+    sequelize,
+    modelName: 'Order',
+    tableName: 'Orders',
+    timestamps: true
+  });
+  return Order;
+};

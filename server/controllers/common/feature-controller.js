@@ -1,4 +1,5 @@
-const Feature = require("../../models/Feature");
+const {Feature} = require("../../models");
+console.log("🚀 ~ Feature:", Feature)
 
 const addFeatureImage = async (req, res) => {
   try {
@@ -20,14 +21,14 @@ const addFeatureImage = async (req, res) => {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Some error occured!",
+      message: e.message,
     });
   }
 };
 
 const getFeatureImages = async (req, res) => {
   try {
-    const images = await Feature.find({});
+    const images = await Feature.findAll();
 
     res.status(200).json({
       success: true,
@@ -37,7 +38,7 @@ const getFeatureImages = async (req, res) => {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Some error occured!",
+      message: e.message,
     });
   }
 };

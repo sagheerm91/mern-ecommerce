@@ -1,30 +1,23 @@
-const mongoose = require("mongoose");
+'use strict';
+const { Model } = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Cart extends Model {
+    static associate(models) {
+      Cart.belongsTo(models.User, { foreignKey: 'userId' });
+      Cart.hasMany(models.CartItem, { foreignKey: 'cartId', as: 'items' });
 
-const CartSchema = new mongoose.Schema(
-  {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    items: [
-      {
-        productId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          required: true,
-          min: 1,
-        },
-      },
-    ],
-  },
-  {
-    timestamps: true,
+    }
   }
-);
-
-module.exports = mongoose.model("Cart", CartSchema);
+  Cart.init({
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    }
+  }, {
+    sequelize,
+    modelName: 'Cart',
+    tableName: 'Carts',
+    timestamps: true
+  });
+  return Cart;
+};

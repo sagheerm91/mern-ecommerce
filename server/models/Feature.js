@@ -1,10 +1,14 @@
-const mongoose = require("mongoose");
-
-const FeatureSchema = new mongoose.Schema(
-  {
-    image: String,
-  },
-  { timestamps: true }
-);
-
-module.exports = mongoose.model("Feature", FeatureSchema);
+'use strict';
+const { Model } = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Feature extends Model {}
+  Feature.init({
+    image: DataTypes.STRING
+  }, {
+    sequelize,
+    modelName: 'Feature',
+    tableName: 'Features',
+    timestamps: true
+  });
+  return Feature;
+};

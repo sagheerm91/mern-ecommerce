@@ -1,0 +1,26 @@
+{
+    "development": {
+      "username": "phymyadmin",
+      "password": "type_your_password_here",
+      "database": "ecommerce",
+      "host": "localhost",
+      "dialect": "mysql"
+    },
+    "test": {
+        "username": "phymyadmin",
+        "password": "type_your_password_here",
+        "database": "ecommerce",
+        "host": "localhost",
+        "dialect": "mysql"
+    },
+    "production": {
+        "username": "phymyadmin",
+        "password": "type_your_password_here",
+        "database": "ecommerce",
+        "host": "localhost",
+        "dialect": "mysql"
+    }
+  }
+  
+  
+  

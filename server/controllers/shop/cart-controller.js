@@ -1,5 +1,5 @@
-const Cart = require("../../models/Cart");
-const Product = require("../../models/Product");
+const { where } = require("sequelize");
+const {Cart, Product, CartItem} = require("../../models");
 
 const addToCart = async (req, res) => {
   try {
@@ -62,11 +62,22 @@ const fetchCartItems = async (req, res) => {
       });
     }
 
-    const cart = await Cart.findOne({ userId }).populate({
-      path: "items.productId",
-      select: "image title price salePrice",
+    const cart = await Cart.findAll({
+      where: { userId },
+      include: [
+        {
+          model: CartItem,
+          as: 'items',
+          include: [
+            {
+              model: Product,
+              attributes: ['id', 'image', 'title', 'price', 'salePrice']
+            }
+          ]
+        }
+      ]
     });
-
+    console.log("🚀 ~ fetchCartItems ~ cart:", cart)
     if (!cart) {
       return res.status(200).json({
         success: false,
@@ -74,36 +85,36 @@ const fetchCartItems = async (req, res) => {
       });
     }
 
-    const validItems = cart.items.filter(
-      (productItem) => productItem.productId
-    );
+    // const validItems = cart.items.filter(
+    //   (productItem) => productItem.productId
+    // );
 
-    if (validItems.length < cart.items.length) {
-      cart.items = validItems;
-      await cart.save();
-    }
+    // if (validItems.length < cart.items.length) {
+    //   cart.items = validItems;
+    //   await cart.save();
+    // }
 
-    const populateCartItems = validItems.map((item) => ({
-      productId: item.productId._id,
-      image: item.productId.image,
-      title: item.productId.title,
-      price: item.productId.price,
-      salePrice: item.productId.salePrice,
-      quantity: item.quantity,
-    }));
+    // const populateCartItems = validItems.map((item) => ({
+    //   productId: item.productId._id,
+    //   image: item.productId.image,
+    //   title: item.productId.title,
+    //   price: item.productId.price,
+    //   salePrice: item.productId.salePrice,
+    //   quantity: item.quantity,
+    // }));
 
     res.status(200).json({
       success: true,
       data: {
-        ...cart._doc,
-        items: populateCartItems,
+        cart,
+        // items: populateCartItems,
       },
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Error",
+      message: error.message,
     });
   }
 };

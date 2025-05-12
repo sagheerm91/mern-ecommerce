@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const sequelize = require("./config/dbConnect");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const authRouter = require("./routes/auth/auth-routes");
@@ -26,13 +27,20 @@ const envPath = path.resolve(`.env.${environment}`);
 
 dotenv.config({ path: envPath });
 
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("MongoDB connected"))
-  .catch((error) => console.log(error));
+// mongoose
+//   .connect(process.env.MONGO_URL)
+//   .then(() => console.log("MongoDB connected"))
+//   .catch((error) => console.log(error));
 
 const app = express();
 const PORT = process.env.PORT || 5008;
+// sequelize.authenticate().then(() => {
+//   console.log('✅ Database connected successfully.');
+//   sequelize.sync();
+//  })
+// .catch(err => {
+//   console.error('❌ Unable to connect to the database:', err);
+// });;
 
 app.use(
   cors({

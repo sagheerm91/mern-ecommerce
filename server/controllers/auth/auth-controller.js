@@ -1,13 +1,55 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../../models/User");
+const { User, Role } = require("../../models");
+const dotenv = require('dotenv');
+const { where } = require("sequelize");
+
+// create roles 
+const createRoles = async (req, res) => {
+  try {
+    const body = req.body;
+    const existingRole = await Role.findOne({ where: { name: body.name } });
+    if (existingRole) {
+      return res.json({
+        success: false,
+        message: "Role already exists",
+      });
+    }
+    const role = await Role.create(body);
+    res.status(200).json({
+      success: true,
+      message: "Role created successfully",
+      data: role,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+//get roles
+const getRoles = async (req, res) => {
+  try {
+    const roles = await Role.findAll();
+    res.status(200).json({
+      success: true,
+      data: roles,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      success: false,
+      message: e.message,
+    });
+  }
+}
 
 //register
 const registerUser = async (req, res) => {
   const { userName, email, password } = req.body;
+  console.log("🚀 ~ registerUser ~ userName, email, password:", userName, email, password)
 
   try {
-    const checkUser = await User.findOne({ email });
+    const checkUser = await User.findOne({ where: { email } });
     if (checkUser)
       return res.json({
         success: false,
@@ -15,10 +57,14 @@ const registerUser = async (req, res) => {
       });
 
     const hashPassword = await bcrypt.hash(password, 12);
+
+    const role = await Role.findOne({ where: { name: "User" } });
+
     const newUser = new User({
       userName,
       email,
       password: hashPassword,
+      role_id: role.id,
     });
 
     await newUser.save();
@@ -40,11 +86,14 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const checkUser = await User.findOne({ email });
+    const checkUser = await User.findOne({ 
+      where: { email },
+      include: [{ model: Role }]
+     });
     if (!checkUser)
       return res.json({
         success: false,
-        message: "User doesn't exists! Please register first",
+        message: "User doesn't exist! Please register first",
       });
 
     const checkPasswordMatch = await bcrypt.compare(
@@ -59,12 +108,12 @@ const loginUser = async (req, res) => {
 
     const token = jwt.sign(
       {
-        id: checkUser._id,
-        role: checkUser.role,
+        id: checkUser.id,
+        role: checkUser.Role,
         email: checkUser.email,
         userName: checkUser.userName,
       },
-      "CLIENT_SECRET_KEY",
+      process.env.CLIENT_SECRET_KEY,
       { expiresIn: "60m" }
     );
 
@@ -74,8 +123,9 @@ const loginUser = async (req, res) => {
       user: {
         email: checkUser.email,
         role: checkUser.role,
-        id: checkUser._id,
+        id: checkUser.id,
         userName: checkUser.userName,
+        token
       },
     });
   } catch (e) {
@@ -117,4 +167,4 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, loginUser, logoutUser, authMiddleware };
+module.exports = { registerUser, loginUser, logoutUser, authMiddleware, createRoles, getRoles };

@@ -4,6 +4,8 @@ const {
   loginUser,
   logoutUser,
   authMiddleware,
+  getRoles,
+  createRoles
 } = require("../../controllers/auth/auth-controller");
 
 const router = express.Router();
@@ -19,5 +21,7 @@ router.get("/check-auth", authMiddleware, (req, res) => {
     user,
   });
 });
+router.get("/get-roles", getRoles);
+router.post("/create-role", createRoles);
 
 module.exports = router;

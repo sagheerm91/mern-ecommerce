@@ -1,18 +1,22 @@
-const mongoose = require("mongoose");
-
-const ProductSchema = new mongoose.Schema(
-  {
-    image: String,
-    title: String,
-    description: String,
-    category: String,
-    brand: String,
-    price: Number,
-    salePrice: Number,
-    totalStock: Number,
-    averageReview: Number,
-  },
-  { timestamps: true }
-);
-
-module.exports = mongoose.model("Product", ProductSchema);
+'use strict';
+const { Model } = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Product extends Model {}
+  Product.init({
+    image: DataTypes.STRING,
+    title: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    category: DataTypes.STRING,
+    brand: DataTypes.STRING,
+    price: DataTypes.FLOAT,
+    salePrice: DataTypes.FLOAT,
+    totalStock: DataTypes.INTEGER,
+    averageReview: DataTypes.FLOAT
+  }, {
+    sequelize,
+    modelName: 'Product',
+    tableName: 'Products',
+    timestamps: true
+  });
+  return Product;
+};

@@ -69,6 +69,7 @@ export const checkAuth = createAsyncThunk(
         },
       }
     );
+    console.log("🚀 ~ response:", response)
 
     return response.data;
   }
